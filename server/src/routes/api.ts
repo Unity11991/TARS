@@ -3,7 +3,7 @@ import { conversationStore } from '../conversations/conversationStore.js';
 import { memoryManager } from '../memory/memoryManager.js';
 import { getToolDefinitions, TOOLS } from '../tools/index.js';
 import { GroqProvider } from '../ai/groqProvider.js';
-import { DEFAULT_PERSONALITY, Message } from '../../../shared/types/index.js';
+import { DEFAULT_PERSONALITY, Message } from '../types/index.js';
 
 export const router = Router();
 const aiProvider = new GroqProvider();

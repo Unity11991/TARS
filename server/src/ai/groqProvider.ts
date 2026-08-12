@@ -1,7 +1,7 @@
 import { AIProvider, StreamOptions } from './provider.js';
 import { buildSystemPrompt } from './promptBuilder.js';
 import { getToolDefinitions, TOOLS } from '../tools/index.js';
-import { ToolResult } from '../../../shared/types/index.js';
+import { ToolResult } from '../types/index.js';
 import Groq from 'groq-sdk';
 
 export class GroqProvider implements AIProvider {

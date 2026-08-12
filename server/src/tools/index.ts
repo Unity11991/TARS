@@ -1,4 +1,4 @@
-import { ToolDefinition, ToolResult } from '../../../shared/types/index.js';
+import { ToolDefinition, ToolResult } from '../types/index.js';
 
 export interface ExecutableTool {
   definition: ToolDefinition;

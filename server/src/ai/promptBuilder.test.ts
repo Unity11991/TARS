@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildSystemPrompt } from './promptBuilder.js';
-import { DEFAULT_PERSONALITY } from '../../../shared/types/index.js';
+import { DEFAULT_PERSONALITY } from '../types/index.js';
 
 describe('PromptBuilder', () => {
   it('should include identity directives and TARS operational parameters', () => {

@@ -1,4 +1,4 @@
-import { Conversation, Message } from '../../../shared/types/index.js';
+import { Conversation, Message } from '../types/index.js';
 
 export class ConversationStore {
   private conversations: Map<string, Conversation> = new Map();

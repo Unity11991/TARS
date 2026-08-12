@@ -1,4 +1,4 @@
-import { Message, PersonalityConfig, MemoryItem, ChatStreamEvent, ToolDefinition } from '../../../shared/types/index.js';
+import { Message, PersonalityConfig, MemoryItem, ChatStreamEvent, ToolDefinition } from '../types/index.js';
 
 export interface StreamOptions {
   personality: PersonalityConfig;

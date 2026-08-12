@@ -1,4 +1,4 @@
-import { PersonalityConfig, MemoryItem } from '../../../shared/types/index.js';
+import { PersonalityConfig, MemoryItem } from '../types/index.js';
 
 export function buildSystemPrompt(personality: PersonalityConfig, memories: MemoryItem[] = []): string {
   const { humor, honesty, confidence, formality, sarcasm, empathy, verbosity } = personality;

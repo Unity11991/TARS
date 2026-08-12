@@ -1,4 +1,4 @@
-import { MemoryItem } from '../../../shared/types/index.js';
+import { MemoryItem } from '../types/index.js';
 
 export class MemoryManager {
   private memories: MemoryItem[] = [];
