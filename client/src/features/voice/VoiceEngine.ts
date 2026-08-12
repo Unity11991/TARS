@@ -1,4 +1,5 @@
 import { AgentState, VoiceConfig, DEFAULT_VOICE_CONFIG } from '../../types/index';
+import { SoundEngine } from '../audio/SoundEngine';
 
 export interface VoiceEngineCallbacks {
   onStateChange: (state: AgentState) => void;
@@ -189,10 +190,13 @@ export class VoiceEngine {
      ========================================== */
   private initSpeechRecognition() {
     const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition ||
+      (window as any).mozSpeechRecognition;
 
     if (!SpeechRecognition) {
-      console.warn('[VoiceEngine] Web SpeechRecognition API not supported in this browser.');
+      console.warn('[VoiceEngine] Web SpeechRecognition API not supported in this browser (Safari/Firefox may lack support).');
+      this.recognition = null;
       return;
     }
 
@@ -334,6 +338,25 @@ export class VoiceEngine {
     }
   }
 
+  public unlockAudioAndTTS() {
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume().catch(() => {});
+    }
+
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const prime = new SpeechSynthesisUtterance('');
+        prime.volume = 0.01;
+        window.speechSynthesis.speak(prime);
+      } catch (e) {
+        console.warn('[VoiceEngine] TTS Prime Notice', e);
+      }
+    }
+
+    SoundEngine.getInstance().resume();
+  }
+
   /* ==========================================
      TEXT-TO-SPEECH (TTS) & QUEUEING
      ========================================== */
@@ -384,15 +407,22 @@ export class VoiceEngine {
       this.isSpeaking = true;
       this.setState('speaking');
 
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
       const utterance = new SpeechSynthesisUtterance(nextSentence);
       utterance.rate = this.voiceConfig.rate || 1.0;
       utterance.pitch = this.voiceConfig.pitch || 1.0;
       utterance.volume = this.voiceConfig.volume || 1.0;
 
-      if (this.voiceConfig.voiceURI) {
-        const voices = window.speechSynthesis.getVoices();
+      const voices = window.speechSynthesis.getVoices();
+      if (this.voiceConfig.voiceURI && voices.length > 0) {
         const selected = voices.find((v) => v.voiceURI === this.voiceConfig.voiceURI);
         if (selected) utterance.voice = selected;
+      } else if (voices.length > 0) {
+        const enVoice = voices.find((v) => v.lang.startsWith('en'));
+        if (enVoice) utterance.voice = enVoice;
       }
 
       utterance.onend = () => {

@@ -337,16 +337,20 @@ export const AgentCore: React.FC = () => {
       {showFirstLaunch && (
         <FirstLaunchModal
           onEnableMic={async () => {
+            // iOS/Safari requires AudioContext unlock on direct user gesture
+            if (voiceEngineRef.current) {
+              voiceEngineRef.current.unlockAudioAndTTS();
+            }
             SoundEngine.getInstance().playBootSound();
             if (voiceEngineRef.current) {
               return await voiceEngineRef.current.initMicrophone();
             }
             return false;
           }}
-          onComplete={() => {
+          onComplete={(useVoice: boolean) => {
             setShowFirstLaunch(false);
             SoundEngine.getInstance().playBootSound();
-            if (voiceEngineRef.current) {
+            if (useVoice && voiceEngineRef.current) {
               voiceEngineRef.current.startListening();
             }
           }}

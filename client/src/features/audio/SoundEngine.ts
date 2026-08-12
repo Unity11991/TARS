@@ -28,6 +28,12 @@ export class SoundEngine {
     return this.audioCtx;
   }
 
+  public resume() {
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume().catch(() => {});
+    }
+  }
+
   public setMuted(muted: boolean) {
     this.muted = muted;
   }
