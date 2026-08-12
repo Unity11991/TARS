@@ -29,7 +29,8 @@ router.post('/chat/stream', async (req, res) => {
     return;
   }
 
-  // Set SSE Headers
+  // Set Explicit HTTP 200 and SSE Headers for Vercel Gateway
+  res.status(200);
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
