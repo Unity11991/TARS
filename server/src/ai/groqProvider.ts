@@ -138,8 +138,10 @@ export class GroqProvider implements AIProvider {
       onEvent({ type: 'done', content: accumulated });
       return accumulated;
     } catch (err: any) {
-      console.error('[GroqProvider API Error - Switching to Fallback Mode]:', err.message);
-      return this.handleFallbackMode(systemPrompt, messages, options);
+      console.error('[GroqProvider Error]:', err.message);
+      const errMsg = `TARS System Notice: LLM API request failed (${err.message}). Check GROQ_API_KEY configuration.`;
+      onEvent({ type: 'error', error: errMsg });
+      return errMsg;
     }
   }
 

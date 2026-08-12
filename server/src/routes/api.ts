@@ -29,15 +29,11 @@ router.post('/chat/stream', async (req, res) => {
     return;
   }
 
-  // Set Explicit HTTP 200 and SSE Headers for Vercel Gateway
-  res.status(200);
+  // Set SSE Headers
   res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no');
-  if (typeof (res as any).flushHeaders === 'function') {
-    (res as any).flushHeaders();
-  }
+  res.flushHeaders();
 
   const sendEvent = (data: object) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);

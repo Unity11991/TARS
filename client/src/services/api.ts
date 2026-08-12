@@ -2,121 +2,61 @@ import { Conversation, MemoryItem, Message, PersonalityConfig, ToolDefinition, C
 
 const API_BASE = '/api';
 
-async function safeJsonFetch<T>(url: string, init?: RequestInit, fallback?: T): Promise<T> {
-  try {
-    const res = await fetch(url, init);
-    if (!res.ok) {
-      console.warn(`[API Warning] GET ${url} status ${res.status}`);
-      return (fallback !== undefined ? fallback : []) as T;
-    }
-    return await res.json();
-  } catch (err) {
-    console.warn(`[API Exception] ${url}:`, err);
-    return (fallback !== undefined ? fallback : []) as T;
-  }
-}
-
 export async function fetchHealth(): Promise<{ status: string; hasApiKey: boolean; model: string }> {
-  return safeJsonFetch(`${API_BASE}/health`, undefined, {
-    status: 'online',
-    hasApiKey: false,
-    model: 'llama-3.1-8b-instant',
-  });
+  const res = await fetch(`${API_BASE}/health`);
+  return res.json();
 }
 
 export async function fetchConversations(): Promise<Conversation[]> {
-  const initialConv: Conversation = {
-    id: 'conv-default',
-    title: 'Initial Exploration Log',
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    messages: [
-      {
-        id: 'msg-welcome',
-        role: 'assistant',
-        content: 'TARS online. Systems operational. What can I help you explore?',
-        timestamp: Date.now(),
-      },
-    ],
-  };
-  return safeJsonFetch(`${API_BASE}/conversations`, undefined, [initialConv]);
+  const res = await fetch(`${API_BASE}/conversations`);
+  return res.json();
 }
 
 export async function createConversation(title?: string): Promise<Conversation> {
-  const newC: Conversation = {
-    id: `conv-${Date.now()}`,
-    title: title || 'New Mission Log',
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    messages: [],
-  };
-  return safeJsonFetch(`${API_BASE}/conversations`, {
+  const res = await fetch(`${API_BASE}/conversations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title }),
-  }, newC);
+  });
+  return res.json();
 }
 
 export async function renameConversation(id: string, title: string): Promise<Conversation> {
-  const updated: Conversation = {
-    id,
-    title,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    messages: [],
-  };
-  return safeJsonFetch(`${API_BASE}/conversations/${id}`, {
+  const res = await fetch(`${API_BASE}/conversations/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title }),
-  }, updated);
+  });
+  return res.json();
 }
 
 export async function deleteConversation(id: string): Promise<{ success: boolean }> {
-  return safeJsonFetch(`${API_BASE}/conversations/${id}`, { method: 'DELETE' }, { success: true });
+  const res = await fetch(`${API_BASE}/conversations/${id}`, { method: 'DELETE' });
+  return res.json();
 }
 
 export async function fetchMemories(): Promise<MemoryItem[]> {
-  const defaultMemories: MemoryItem[] = [
-    {
-      id: 'mem-1',
-      key: 'Response Length Preference',
-      value: 'User prefers concise, direct responses suitable for real-time speech.',
-      category: 'preference',
-      createdAt: Date.now(),
-    },
-    {
-      id: 'mem-2',
-      key: 'TARS Primary Mandate',
-      value: 'Operate as a calm, highly analytical space exploration assistant.',
-      category: 'instruction',
-      createdAt: Date.now(),
-    },
-  ];
-  return safeJsonFetch(`${API_BASE}/memory`, undefined, defaultMemories);
+  const res = await fetch(`${API_BASE}/memory`);
+  return res.json();
 }
 
 export async function addMemory(key: string, value: string, category: MemoryItem['category']): Promise<MemoryItem> {
-  const newItem: MemoryItem = {
-    id: `mem-${Date.now()}`,
-    key,
-    value,
-    category,
-    createdAt: Date.now(),
-  };
-  return safeJsonFetch(`${API_BASE}/memory`, {
+  const res = await fetch(`${API_BASE}/memory`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ key, value, category }),
-  }, newItem);
+  });
+  return res.json();
 }
 
 export async function deleteMemory(id: string): Promise<{ success: boolean }> {
-  return safeJsonFetch(`${API_BASE}/memory/${id}`, { method: 'DELETE' }, { success: true });
+  const res = await fetch(`${API_BASE}/memory/${id}`, { method: 'DELETE' });
+  return res.json();
 }
 
 export async function fetchTools(): Promise<ToolDefinition[]> {
-  return safeJsonFetch(`${API_BASE}/tools`, undefined, []);
+  const res = await fetch(`${API_BASE}/tools`);
+  return res.json();
 }
 
 export interface StreamChatParams {
