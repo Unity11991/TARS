@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "description": "TARS - Futuristic Spacecraft AI Voice Agent",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix server && npm run build --prefix client",
